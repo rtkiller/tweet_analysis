@@ -7,6 +7,7 @@ Created on Sun May 24 09:48:05 2015
 
 from TwitterAPI import TwitterAPI
 from configparser import SafeConfigParser
+from textblob import TextBlob
 
 """
 Create twitter connection via TwitterAPI
@@ -29,6 +30,15 @@ api = TwitterAPI(CONSUMER_KEY,
 Get tweets using a subject filter
 """
 
+f = open('tweets.txt','w', encoding='utf-8')
+
 t = api.request('statuses/filter', {'track':'happy'})
-for s in t:
-    print(s['text'] if 'text' in s else s)
+i = 0
+for i in range(100):       ## TEST CODE- Only print first 100 tweets
+	for s in t.get_iterator():
+		text = TextBlob(s['text'])
+		f.write(s['user']['screen_name']+': ' + s['text'] +' '+ str(text.sentiment.polarity) + '\n')
+		i+=1
+		break
+f.close()
+
